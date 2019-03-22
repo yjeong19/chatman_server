@@ -6,8 +6,8 @@ const db = require('../models');
 module.exports = {
   postMessage: async (room_id, message, username) => {
     let returnData;
-
-    await db.chatrooms.findByIdAndUpdate(ObjectId(room_id, username, message), {
+    console.log(room_id, message, username);
+    await db.chatrooms.findByIdAndUpdate(ObjectId(room_id), {
       $push: {
         messages: [{
           user: username,
@@ -16,6 +16,7 @@ module.exports = {
       }
     }, {new: true})
     .then(data => {
+      console.log(data);
       returnData = data;
     })
     .catch(err => {

@@ -24,20 +24,6 @@ server.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 });
 
-
-app.post('/room', (req, res, next) => {
-  const { username } = req.body
-  //get user id.
-  chatroom.getId({username, id: '123' })
-    .then(data => {
-      //temporaily making room global
-      room = data._id
-      res.send(data);
-    })
-    // .then(()=> chatroomSocket.newRoom(io, room))
-    .catch(err => console.log(err));
-});
-
 app.get('/room', (req,res, next) => {
   chatroom.getAllRooms()
     .then(data => {
@@ -68,26 +54,22 @@ app.get('/messages', (req, res) => {
 
 //testing sockt server
   io.on('connection', (socket)=>{
-    room = '';
     socket.on('joinRoom', (room_id) => {
-      room = room_id;
-      console.log(room_id);
+      // console.log(room_id);
       console.log('joined on', room_id);
       socket.join(room_id);
       socket.emit('joined', 'youve entered the dungeon')
     })
 
     socket.on('leaveRoom', (room_id) => {
-      console.log('old room', room_id);
+      // console.log('old room', room_id);
       socket.leave(room_id);
     })
 
     socket.on('message', (message) => {
-    console.log('messaging',message);
-    console.log(room);
-    io.to(message.room_id).emit('message', [message]);
+    socket.to(message.room_id).emit('message', [message]);
     //need to send username and room_id from client
-    // messages.postMessage(message.room, message.message, message.username);
+    messages.postMessage(message.room_id, message.message, message.username);
 
     })
   })
@@ -95,6 +77,29 @@ app.get('/messages', (req, res) => {
 
 //loging in and registering
 app.use('/', users);
+
+//testing users and their chats
+//gets the chats of users
+app.get('/rooms', (req, res) => {
+  const { user_id } = req.query;
+  chatroom.findUserRooms(user_id)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => console.log(err));
+});
+
+app.get('/createChat', (req, res) => {
+  const { user_id } = req.body;
+  chatroom.createChat({username: 'test', id: 'testing'})
+    .then(data => {
+      console.log(data)
+      chatroom.addChatToUser(user_id, data)
+        .then(data => console.log('line 98 ===============',data.chats))
+        .catch(err => console.log(err));
+    })
+    .catch(err => console.log(err));
+})
 
 
 //testing with id of room provided by DB

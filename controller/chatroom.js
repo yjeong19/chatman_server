@@ -2,7 +2,7 @@ const db = require('../models');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports = {
-  getId: async function(payload){
+  createChat: async function(payload){
     const { username, id } = payload
     let data;
     await db.chatrooms.create({
@@ -51,6 +51,30 @@ module.exports = {
     return data;
   },
 
+  findUserRooms: async function(user_id){
+    let data; 
+    await db.users.findById(ObjectId(user_id))
+      .then(resp => {
+        data = resp
+      })
+      .catch(err => console.log(err));
+    return data;
+  },
+
+  addChatToUser: async function(user_id, payload){
+    let data;
+    await db.users.findOneAndUpdate(ObjectId(user_id), {
+      $push: {
+        chats: [{
+          room_id: payload._id,
+          users: payload.users
+        }]
+      }
+    }, {new: true})
+      .then(resp => data = resp)
+      .catch(err => console.log(err));
+    return data;
+  },
 
 
 }
