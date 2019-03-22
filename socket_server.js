@@ -90,7 +90,7 @@ app.get('/rooms', (req, res) => {
 });
 
 app.get('/createChat', (req, res) => {
-  const { user_id } = req.body;
+  const { user_id } = req.query;
   chatroom.createChat({username: 'test', id: 'testing'})
     .then(data => {
       console.log(data)
