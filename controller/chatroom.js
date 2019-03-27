@@ -62,8 +62,9 @@ module.exports = {
   },
 
   addChatToUser: async function(user_id, payload){
+    console.log(user_id)
     let data;
-    await db.users.findOneAndUpdate(ObjectId(user_id), {
+    await db.users.findByIdAndUpdate(ObjectId(user_id), {
       $push: {
         chats: [{
           room_id: payload._id,
@@ -71,7 +72,7 @@ module.exports = {
         }]
       }
     }, {new: true})
-      .then(resp => data = resp)
+      .then(resp => {console.log(resp); data = resp})
       .catch(err => console.log(err));
     return data;
   },

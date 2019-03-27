@@ -93,9 +93,10 @@ app.get('/createChat', (req, res) => {
   const { user_id } = req.query;
   chatroom.createChat({username: 'test', id: 'testing'})
     .then(data => {
-      console.log(data)
       chatroom.addChatToUser(user_id, data)
-        .then(data => console.log('line 98 ===============',data.chats))
+        .then(data => {
+          res.send(data.chats);
+        })
         .catch(err => console.log(err));
     })
     .catch(err => console.log(err));
