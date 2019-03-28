@@ -89,19 +89,47 @@ app.get('/rooms', (req, res) => {
     .catch(err => console.log(err));
 });
 
+// app.get('/createChat', (req, res) => {
+//   const { user_id, username } = req.query;
+//   console.log(req.query);
+//   chatroom.createChat({username, id: user_id})
+//     .then(data => {
+//       console.log('line 97', data);
+//       console.log(typeof(data));
+//         chatroom.addChatToUser(user_id, data)
+//         .then(data => {
+//           res.send(data.chats);
+//         })
+//         .catch(err => console.log(err));
+//     })
+//     .catch(err => console.log(err));
+// })
+
 app.get('/createChat', (req, res) => {
-  const { user_id } = req.query;
-  chatroom.createChat({username: 'test', id: 'testing'})
+  const { username, user_id } = req.query;
+  //user_id == the id creating the chat,
+  //username == the username of person being added to chat
+
+  //addusertochat checks if user exists;
+  chatroom.addUserToChat(username)
     .then(data => {
-      chatroom.addChatToUser(user_id, data)
-        .then(data => {
-          res.send(data.chats);
-        })
-        .catch(err => console.log(err));
+      //if user exists, create chatroom
+      if(data !== null){
+        chatroom.createChat({username: data.username, id: data._id})
+          .then(chatData =>{
+            console.log('line 121', chatData._id);
+            //using the response from creating chatroom, push to userID == need to push to both??
+            chatroom.addChatToUser(user_id, chatData, data._id)
+            res.json(chatData);
+          })
+          .catch(err => console.log(err));
+      }else {
+        console.log('no user')
+        res.json('no user');
+      }
     })
     .catch(err => console.log(err));
 })
-
 
 //testing with id of room provided by DB
 

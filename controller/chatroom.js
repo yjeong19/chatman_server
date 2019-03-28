@@ -5,6 +5,8 @@ module.exports = {
   createChat: async function(payload){
     const { username, id } = payload
     let data;
+    //check if username exists;
+
     await db.chatrooms.create({
       owner: {
         username,
@@ -19,27 +21,7 @@ module.exports = {
       data = resp;
       })
       .catch(err => console.log(err))
-    return data;
-  },
-
-  addUser: async function(payload){
-    const { username, room_id } = payload;
-    //need user_id instead of room_id;
-    //push user_id with username in the update;
-    let data;
-    await db.chatrooms.findByIdAndUpdate(ObjectId(room_id), {
-      $push : {
-        users: [{
-          // user
-          username,
-        }],
-      }
-    }, {new : true})
-    .then(res => {
-      data = res
-    })
-    .catch(err => {console.log(err)})
-      return data
+      return data;
   },
   getAllRooms: async function(payload){
     let data;
@@ -61,21 +43,36 @@ module.exports = {
     return data;
   },
 
-  addChatToUser: async function(user_id, payload){
-    console.log(user_id)
+  addChatToUser: async function(user_id, payload, user_id2){
     let data;
-    await db.users.findByIdAndUpdate(ObjectId(user_id), {
-      $push: {
-        chats: [{
-          room_id: payload._id,
-          users: payload.users
-        }]
-      }
-    }, {new: true})
-      .then(resp => {console.log(resp); data = resp})
-      .catch(err => console.log(err));
+    const ids = [user_id, user_id2];
+
+    ids.forEach((user, i) => {
+      db.users.findByIdAndUpdate(ObjectId(user), {
+        $push: {
+          chats: [{
+            room_id: payload._id,
+            users: payload.users
+          }]
+        }
+      }, {new: true})
+        .then(resp => data = resp)
+        .catch(err => console.log(err));
+    })
     return data;
   },
 
+  addUserToChat: async function (username){
+    let data; 
+    await db.users.findOne({username})
+      .then(user => {
+        if(!user){
+        data = 'No user with that username';
+        }
+        data = user;
+      })
+      .catch(err => console.log(err));
+      return data;
+  }
 
 }
