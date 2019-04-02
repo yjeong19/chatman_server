@@ -32,16 +32,6 @@ app.get('/room', (req,res, next) => {
     .catch(err => console.log(err));
 });
 
-//this is request is to update chatrooms and add user.
-app.put('/test', (req, res) => {
-  //need to get id from db.
-  //send the id as second argument to joinRoom;
-  // console.log('line 52 socket_server' ,req.body)
-  chatroom.addUser({username: 'poop', room_id: '5c750a51a98436ae995e800e'})
-    .then(data => res.send(data))
-    .catch(err => console.log('line 55 socket server', err))
-});
-
 app.get('/messages', (req, res) => {
   const { room_id } = req.query;
   messages.loadMessages(room_id)
@@ -89,21 +79,6 @@ app.get('/rooms', (req, res) => {
     .catch(err => console.log(err));
 });
 
-// app.get('/createChat', (req, res) => {
-//   const { user_id, username } = req.query;
-//   console.log(req.query);
-//   chatroom.createChat({username, id: user_id})
-//     .then(data => {
-//       console.log('line 97', data);
-//       console.log(typeof(data));
-//         chatroom.addChatToUser(user_id, data)
-//         .then(data => {
-//           res.send(data.chats);
-//         })
-//         .catch(err => console.log(err));
-//     })
-//     .catch(err => console.log(err));
-// })
 
 app.get('/createChat', (req, res) => {
   const { username, currentUser, current_id } = req.query;
