@@ -106,7 +106,7 @@ app.get('/rooms', (req, res) => {
 // })
 
 app.get('/createChat', (req, res) => {
-  const { username, user_id } = req.query;
+  const { username, currentUser, current_id } = req.query;
   //user_id == the id creating the chat,
   //username == the username of person being added to chat
 
@@ -115,11 +115,11 @@ app.get('/createChat', (req, res) => {
     .then(data => {
       //if user exists, create chatroom
       if(data !== null){
-        chatroom.createChat({username: data.username, id: data._id})
+        chatroom.createChat({username: data.username, id: data._id.toString(), currentUser, current_id})
           .then(chatData =>{
             console.log('line 121', chatData._id);
             //using the response from creating chatroom, push to userID == need to push to both??
-            chatroom.addChatToUser(user_id, chatData, data._id)
+            chatroom.addChatToUser(current_id, chatData, data._id)
             res.json(chatData);
           })
           .catch(err => console.log(err));

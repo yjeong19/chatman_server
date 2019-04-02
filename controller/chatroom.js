@@ -3,19 +3,26 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports = {
   createChat: async function(payload){
-    const { username, id } = payload
+    const { username, id, currentUser, current_id } = payload
+    console.log('line 7========', payload);
     let data;
     //check if username exists;
 
     await db.chatrooms.create({
       owner: {
-        username,
-        id,
+        username: currentUser,
+        id: current_id,
       },
-      users: [{
-        username,
-        id
-      }]
+      users: [
+        { 
+          username,
+          id
+        },
+        {
+          username: currentUser,
+          id: current_id,
+        }
+      ]
     })
       .then(resp => {
       data = resp;
