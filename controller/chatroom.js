@@ -62,7 +62,7 @@ module.exports = {
     return data;
   },
 
-  addUserToChat: async function (username){
+  findUser: async function (username){
     let data; 
     await db.users.findOne({username})
       .then(user => {

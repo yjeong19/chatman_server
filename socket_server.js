@@ -111,7 +111,7 @@ app.get('/createChat', (req, res) => {
   //username == the username of person being added to chat
 
   //addusertochat checks if user exists;
-  chatroom.addUserToChat(username)
+  chatroom.findUser(username)
     .then(data => {
       //if user exists, create chatroom
       if(data !== null){
@@ -131,21 +131,3 @@ app.get('/createChat', (req, res) => {
     .catch(err => console.log(err));
 })
 
-//testing with id of room provided by DB
-
-// function sendMessage(message, socket, fromServer){
-//   const testroom = io.of(`/${room}`);
-//   // console.log(test);
-//   var sender = fromServer ? io : socket.broadcast;
-//   console.log(room);
-//   // console.log(sender);
-//   //sender has to be io.of
-//   testroom.emit('message', [message.text]);
-// }
-//
-// const stdin = process.openStdin();
-// stdin.addListener('data', (d) => {
-//   sendMessage({
-//     text: d.toString().trim(),
-//   }, null, true);
-// })
