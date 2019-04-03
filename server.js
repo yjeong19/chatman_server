@@ -44,6 +44,19 @@ app.get('/messages', (req, res) => {
 
 //testing sockt server
   io.on('connection', (socket)=>{
+
+    socket.on('chatList', (username) => {
+      socket.join(username);
+      console.log('user joined on dash', username);
+    })
+
+    socket.on('newChat', (room) => {
+      console.log(room, '--------===================-------------------');
+      // socket.emit('newChat', room)
+      socket.to(room.users[0].username).emit('newChat', room);
+      
+    })
+
     socket.on('joinRoom', (room_id) => {
       // console.log(room_id);
       console.log('joined on', room_id);
