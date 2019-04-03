@@ -51,10 +51,10 @@ app.get('/messages', (req, res) => {
     })
 
     socket.on('newChat', (room) => {
-      console.log(room, '--------===================-------------------');
+      // console.log(room, '--------===================-------------------');
       // socket.emit('newChat', room)
       socket.to(room.users[0].username).emit('newChat', room);
-      
+
     })
 
     socket.on('joinRoom', (room_id) => {
