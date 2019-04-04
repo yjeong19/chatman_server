@@ -3,6 +3,7 @@ const isEmpty = require('./is-empty');
 
 module.exports = function validateRegisterInput(data){
   let errors = {};
+  let passMatch = false;
 
   data.username = !isEmpty(data.username) ? data.username: '';
   data.password = !isEmpty(data.password) ? data.password : '';
@@ -24,8 +25,17 @@ module.exports = function validateRegisterInput(data){
     errors.name = 'password must be between 6 - 20 characters';
   }
 
+  if(!Validator.equals(data.password, data.password2)){
+    passMatch = false;
+    console.log('pass did not match')
+    errors.name = 'password must match';
+  }else {
+    passMatch = true; 
+  }
+
   return {
     errors,
-    isValid: isEmpty(errors)
+    isValid: isEmpty(errors),
+    passMatch, 
   };
 }
